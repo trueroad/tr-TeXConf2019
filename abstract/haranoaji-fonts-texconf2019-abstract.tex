@@ -1,0 +1,1719 @@
+% -*- coding: utf-8; mode: latex; -*-
+
+%
+% TeXConf 2019 一般講演「原ノ味フォントとToUnicode CMap」
+% https://github.com/trueroad/tr-TeXConf2019
+%
+% 公開用アブストラクトのソース
+%
+% Copyright (C) 2019 Masamichi Hosoda.
+% This file is licensed under a Creative Commons Attribution-ShareAlike 4.0
+% International License.
+%
+
+%
+% クラスファイル読み込み前の設定
+%
+
+% PDF/A のメタデータ（pdfx.sty が読み込む）
+\begin{filecontents*}{\jobname.xmpdata}
+  \Language{ja-JP}
+  \Title{原ノ味フォントとToUnicode CMap}
+  \Author{細田 真道}
+  \Subject{TeXConf 2019}
+  \Keywords
+      {原ノ味フォント\sep ToUnicode CMap\sep pTeX\sep LuaTeX\sep pdf-rm-tuc}
+  \Copyright{Copyright (C) 2019 Masamichi Hosoda.
+    This paper is licensed under a Creative Commons Attribution-ShareAlike 4.0
+    International License.}
+\end{filecontents*}
+
+% LuaTeX マニュアルより、出力しないものを指定
+% ただし ID を出力しないと PDF/A-2 Rule 6.1.3-1 違反になる
+% Creator, CreationDate, ModDate, Producer, Trappedは
+% ナゼか出力抑制できない模様なのでそのまにする
+\pdfvariable suppressoptionalinfo \numexpr
+        0
+%    +   1   % PTEX.FullBanner
+    +   2   % PTEX.FileName
+    +   4   % PTEX.PageNumber
+    +   8   % PTEX.InfoDict
+%    +  16   % Creator
+%    +  32   % CreationDate
+%    +  64   % ModDate
+%    + 128   % Producer
+%    + 256   % Trapped
+%    + 512   % ID
+\relax
+
+%
+% クラスファイル読み込み
+%
+
+% jlreq.cls を使う
+\documentclass[%
+  twocolumn,%       二段組
+  jafontscale=1,%   和文フォントスケール 1
+  %                 （和文を基準として欧文をフォント設定で拡大する）
+  fontsize=9.5pt, % 和文 9.5pt （欧文は後で 5 % 拡大する）
+  jlreq_notes%      JLReq コメントを表示
+]{jlreq}
+
+%
+% フォントなどの指定（LuaLaTeX 向け）
+%
+
+% 縦書き用
+%\usepackage{lltjext}
+
+% CID 直接指定用
+\usepackage{luatexja-otf}
+
+% ルビ用
+\usepackage{luatexja-ruby}
+
+% 欧文・数式フォント設定の事前準備
+\usepackage[no-math]{fontspec}
+
+% 和文フォント設定準備
+\usepackage[%
+  deluxe,%         複数のウェイトを使う
+  match,%          欧文フォントのファミリ指定と連動させる
+  nfssonly,%       luatexja-fontspec を使わない（メモリ・時間節約）
+  jfm_yoko=jlreq,% JFM は jlreq のものを使う
+  jfm_tate=jlreqv% JFM は jlreq のものを使う
+]{luatexja-preset}
+
+% 原ノ味フォント用プリセットを設定（sourcehan と同じウェイトを指定）
+\ltjnewpreset{%
+  HaranoAji% プリセット名
+}{%
+  mc-l = HaranoAjiMincho-Light.otf,%   明朝       light
+  mc-m = HaranoAjiMincho-Regular.otf,% 明朝       medium
+  mc-bx = HaranoAjiMincho-Bold.otf,%   明朝       bold
+  gt-m = HaranoAjiGothic-Regular.otf,% ゴシック   light
+  gt-bx = HaranoAjiGothic-Bold.otf,%   ゴシック   bold
+  gt-eb = HaranoAjiGothic-Heavy.otf,%  ゴシック   extra bold
+  mg-m = HaranoAjiGothic-Heavy.otf%    丸ゴシック（無いので代替）
+}
+
+% 原ノ味フォントを設定
+\ltjapplypreset{HaranoAji}
+
+% 特殊用フォント
+%\jfont\minfwid{file:HaranoAjiMincho-Bold.otf:jfm=jlreq;+fwid} at 12pt
+%\jfont\shsans{file:SourceHanSans-Regular.otf:jfm=jlreq} at 9.5pt
+
+% 数式フォント設定
+\usepackage{amsmath}
+\usepackage{unicode-math}
+\unimathsetup{math-style=ISO,bold-style=ISO}
+\setmathfont[Scale=1.05]{Libertinus Math}% フォントサイズ 5 % 拡大 (9.975pt)
+
+% 欧文フォント設定
+\setmainfont[Scale=1.05]{Libertinus Serif}% フォントサイズ 5 % 拡大 (9.975pt)
+\setsansfont[Scale=1.05]{Libertinus Sans}%  フォントサイズ 5 % 拡大 (9.975pt)
+\setmonofont{Source Code Pro}[Scale=MatchLowercase]% 大きく見えるので調整
+
+% LuaTeX-ja 調整
+\usepackage{luatexja-adjust}
+\ltjenableadjust[%
+  lineend=extended,% 行末文字の位置調整    : 行分割の過程で考慮
+  priority=true,%    優先順位付きの行長調整: 有効化
+  profile=true%      中身まで見た行送り計算: 有効化
+]
+
+% pdfx.sty で PDF バージョン指定が効かない対策
+\usepackage{luatex85}
+\pdfminorversion=5
+
+% LuaTeX で PDF/A-2 を作る際に必要
+\pdfvariable omitcidset=1
+
+%
+% 各種パッケージの読み込みと設定
+%
+
+\usepackage{graphicx}% 図の貼り込み用
+\usepackage[hyperref]{xcolor}% 色指定用
+
+% 最終ページで両カラムの下端を揃える
+%\usepackage[balance]{nidanfloat}
+%\usepackage{nidanfloat}
+\usepackage[keeplastbox]{flushend}
+
+\usepackage{url}% \url 用
+\urlstyle{same}% \url のスタイルは本文と同じ
+
+\usepackage{fancyhdr}%  表紙右上にヘッダを出すため
+\usepackage{bxtexlogo}% 各種 TeX ロゴ用
+\bxtexlogoimport{*}
+\usepackage{listings}%  ソースファイル表示用
+\usepackage{tcolorbox}% 枠囲み用
+\usepackage{colortbl}%  表罫線の色指定用
+
+%
+% PDF/A 関連設定
+%
+
+% pdfx.sty で PDF/A-2u の作成を指定
+\usepackage[%
+  pdf15,% PDF 1.5 の生成を指定（ただしナゼか効かない）
+  a-2u%   PDF/A-2u の生成を指定
+]{pdfx}
+
+% hyperref 設定
+\hypersetup{%
+  unicode=true,%           LuaLaTeX 利用のため
+  bookmarks=true,%         しおり生成
+  bookmarksnumbered=true,% しおりに節番号などを付与
+  colorlinks=true,%        リンクをカラー表示（非ボックス表示）
+  urlcolor=blue,%          \url リンク色指定
+  citecolor=[gray]{0},%    \cite リンク色指定
+  linkcolor=[gray]{0},%    \ref リンク色指定
+}
+
+% pdfx.sty が変更した xcolor の設定を再設定
+% gray は gray のままで rgb に変換されないようにする
+\selectcolormodel{natural}
+
+% 本文を rgb ではなく gray の黒に設定
+% gray でも PDF/A-2 的には OK だし、黒はちゃんと黒にしたい
+\color[gray]{0}
+
+%
+% jlreq.cls の設定変更
+%
+
+% \section などの見出しをゴシック太字からゴシックへ変更
+\makeatletter
+\ModifyHeading{section}{font={\jlreq@keepbaselineskip{\Large\sffamily}}}
+\ModifyHeading{subsection}{font={\jlreq@keepbaselineskip{\large\sffamily}}}
+\ModifyHeading{subsubsection}%
+              {font={\jlreq@keepbaselineskip{\normalsize\sffamily}}}
+\ModifyHeading{paragraph}%
+              {font={\jlreq@keepbaselineskip{\normalsize\sffamily}}}
+\ModifyHeading{subparagraph}%
+              {font={\jlreq@keepbaselineskip{\normalsize\sffamily}}}
+\makeatother
+
+% abstract 環境の見出しをゴシック太字からゴシックへ変更
+\edef\abstractnamebackup{\abstractname}
+\renewcommand{\abstractname}{\mdseries{\abstractnamebackup}}
+
+% caption 関係のフォントをゴシック太字からゴシックへ変更
+\jlreqsetup{caption_font={\sffamily},caption_label_font={\sffamily}}
+
+% \section* をしおりに含める（「参考文献」も含まれるようになる）
+% さらに https://github.com/abenori/jlreq/issues/54 の回避
+\makeatletter
+\let\origsection\section
+\def\section{%
+  \vskip 0pt%
+  \@ifstar%
+      {\starsection}%
+      {\origsection}}
+\def\starsection#1{%
+  \origsection*{%
+    \phantomsection%
+    \addcontentsline{toc}{section}{#1}%
+    #1}}
+
+\let\origsubsection\subsection
+\def\subsection{%
+  \vskip 0pt%
+  \origsubsection}
+
+\let\origsubsubsection\subsubsection
+\def\subsubsection{%
+  \vskip 0pt%
+  \origsubsubsection}
+\makeatother
+
+%
+% その他の見た目の設定
+%
+
+% 最初のページのヘッダ指定
+\lhead{}
+\chead{}
+\rhead{%
+  \small{\smash{\vtop{%
+    TeXConf 2019（2019年10月12日） \\
+    Copyright (C) 2019 Masamichi Hosoda \\
+    \href{https://creativecommons.org/licenses/by-sa/4.0/deed.ja}%
+         {\includegraphics[height=2.5ex]{by-sa}}}}}}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{0pt}
+
+% \url で表示するURLのフォントを等幅フォントからローマン体へ変更
+\renewcommand\UrlFont{\rmfamily}
+
+% listings 設定
+\lstset{%
+  basicstyle=\scriptsize\ttfamily,% フォント設定
+  frame=none,% 枠を付けない（listings の枠線は隙間が空いてしまうので）
+  lineskip=-0.6ex% 行間を詰める
+}
+
+%\widowpenalty=0%      default 150
+%\clubpenalty=0%       default 150
+%\interlinepenalty=0 % default 0
+
+%\parskip=0pt plus 1pt%     default 0pt plus 1pt
+%\parfillskip=0pt plus \hfil% default 0pt plus 1fil
+
+%
+% タイトル・概要
+%
+
+\title{\textsf{原ノ味フォントとToUnicode CMap}}
+\author{細田 真道 \\ \url{http://www.trueroad.jp}}
+\date{}% 日付表示を抑制
+
+\begin{abstract}
+  原ノ味明朝・原ノ味角ゴシック（原ノ味フォント）は、
+  Adobe-Identity-0 (AI0)フォントである
+  源ノ明朝・源ノ角ゴシック（源ノフォント）を、
+  Adobe-Japan1 (AJ1)フォントになるよう組み替えたフォントである。
+  AI0フォントはAJ1フォントと同様の使い方ができず、使用が困難なケースがある。
+  そこで源ノフォントをAJ1へ組み替えることにより、
+  豊富なウェイト数を有する源ノフォントのデザインをそのままに、
+  従来のAJ1フォントと同様の使い方ができるようにした。
+  本稿では、こうした原ノ味フォントの特徴を紹介する。
+  そのため、まずAJ1とAI0を比較し、
+  源ノフォントが一部の\TeX エンジン・DVIドライバや
+  Ghostscriptで使用困難となる理由を述べる。
+  そして、それを解決するために作成した、
+  源ノフォントをAJ1へ組み替える原ノ味フォント生成プログラムと、
+  原ノ味フォントの使用例を紹介する。
+  次に、PDFからテキスト抽出する際に使われるToUnicode CMapについて述べ、
+  源ノフォントを使うと一部のワークフローでは
+  テキスト抽出時に文字化けするPDFが生成されてしまう場合があることを示す。
+  そして、すべてのテキストが抽出できる必要があるPDF/A-2u規格について述べ、
+  規格上はAJ1であればToUnicode CMapが無くてもよいこと、
+  それでも正しくテキスト抽出できることを示す。
+  最後に\LuaTeX はAJ1でもToUnicode CMapを生成し、
+  一部のグリフで正しくないテキストが抽出される場合があることを示す。
+  そこでPDF/A-2u規格を満たしたまま、
+  PDFから原ノ味フォントのToUnicode CMapを削除し、
+  正しいテキスト抽出ができるようにするツールを作成したので紹介する。
+\end{abstract}
+
+%
+% 本文
+%
+
+\begin{document}
+
+% 最初のページだけヘッダを出す
+\thispagestyle{fancy}
+
+% タイトル・概要を出す
+\maketitle
+
+% 脚注に CC BY-SA 4.0 の文言を入れる
+% 参照元は無し、脚注番号は * にしておく
+\let\thefootnotebackup\thefootnote
+\renewcommand{\thefootnote}{* \inhibitglue}
+\footnotetext[1]{%
+  本稿は%
+  \href{https://creativecommons.org/licenses/by-sa/4.0/deed.ja}%
+       {クリエイティブ・コモンズ 表示-継承4.0国際ライセンス}%
+       の下に提供されています。}
+\footnotetext[1]{%
+  This paper is licensed under a
+  \href{https://creativecommons.org/licenses/by-sa/4.0/}%
+       {Creative Commons Attribution-ShareAlike 4.0 International License}.}
+\let\thefootnote\thefootnotebackup
+
+\section{はじめに}
+
+源ノ明朝\cite{sourcehanserif}・
+源ノ角ゴシック\cite{sourcehansans}（以下、源ノフォント）は
+SIL Open Font License 1.1 \cite{sil-ofl}に基づく
+オープンソースのPan-CJKフォントである。
+日本語だけでなくCJK各言語で使われる多数のグリフを収録し、
+明朝・ゴシックそれぞれ7ウェイトという豊富なウェイト数の
+フォントが配布されている。
+フォントの形式はCID-keyed OpenType/CFFであるが、
+従来の同形式の日本語フォントは、
+文字コレクションとしてAdobe-Japan1（以下、AJ1）\cite{aj1}が
+使われていたのに対して、
+源ノフォントはAdobe-Identity-0（以下、AI0）が使われている。
+このため、日本語フォントがAJ1であることを前提としたシステムで、
+AI0である源ノフォントを使用するのは困難である。
+
+各種\TeX エンジン・DVIドライバにおいては、
+関係各位のご尽力によりAI0対応・源ノフォント対応が進められてきた。
+その結果、最新の\TeX \ Live 2019までに、モダンな\LuaTeX や\XeTeX では
+他の日本語フォントとほぼ同様に使用でき、
+\upTeX でもDVIドライバがdvipdfmxであれば、
+一部を除きほぼ同様に使用できるようになっている。
+\pTeX においてもDVIドライバにdvipdfmxを用いて
+PXufontパッケージ\cite{pxufont}を利用することで源ノフォントを使用できる。
+しかし\pTeX しか選択できない
+（モダンな\LuaTeX や\XeTeX に移行できず、\upTeX も使えない）
+場合で、PXufontパッケージも使えない場合には、
+源ノフォントを使用することは困難である。
+また、\upTeX が選択できる場合や、
+\pTeX でPXufontパッケージを使ってよい場合であっても、
+DVIドライバにdvipdfmxではなくdvipsを利用したい場合には、
+源ノフォントを使用することは困難である。
+
+Ghostscriptは最初から源ノフォントを使うことを前提にして作成された
+（例えばLilyPond \cite{lilypond}で源ノフォントを使って生成した）
+PostScriptファイルであれば、問題なく画面表示やPDF変換などが可能である。
+しかし、AJ1フォントを前提とした
+（例えばdvipsでRyumin-LightやGothicBBB-Mediumを前提に生成した）
+PostScriptファイルを、
+源ノフォントで代替して画面表示やPDF変換などすることは困難である。
+
+さらに、源ノフォントを使ったPDFは、
+正しいToUnicode CMapが埋め込まれていないと、
+PDFからのテキスト抽出\footnote{PDF viewerからのコピー\&ペーストなど。}が
+文字化けする。
+PDFを生成するワークフローによっては、
+ToUnicode CMapが誤っていたり生成できなかったりして、
+表示や印刷では問題なくてもテキスト抽出時に文字化けしてしまうことがある。
+
+一方、原ノ味フォント\cite{haranoaji}はAJ1なので、
+豊富なウェイト数を有する源ノフォントのデザインをそのままに、
+従来のAJ1である日本語フォントと同様の使い方ができる。
+また、PDFにToUnicode CMapが無くても
+テキスト抽出が文字化けしない。
+
+本稿では、こうした原ノ味フォントの特徴を紹介する。
+そのため、まずAJ1とAI0を比較し、
+源ノフォントが一部の\TeX エンジン・DVIドライバや
+Ghostscriptで使用困難となる理由を述べる。
+そして、それを解決するために作成した、
+源ノフォントをAJ1へ組み替える原ノ味フォント生成プログラム
+\cite{haranoaji-generator}と、
+原ノ味フォントを各種\TeX エンジン・DVIドライバや
+Ghostscriptで使用する例を紹介する。
+次に、PDFからテキスト抽出する際に使われるToUnicode CMapについて述べ、
+源ノフォントを使うと一部のワークフローでは
+間違ったToUnicode CMapがPDFに埋め込まれたり、
+あるいはToUnicode CMapが生成できなかったりして、
+表示や印刷では問題なくてもテキスト抽出時に文字化けが発生する
+PDFが生成されてしまう場合があることを示す。
+そして、すべてのテキストが抽出できる必要があるPDF/A-2u規格について述べ、
+規格上はAJ1であればToUnicode CMapが無くてもよいことになっており、
+それでも正しくテキスト抽出できることを示す。
+最後に、\LuaTeX はAJ1フォントを使っても
+ToUnicode CMapを生成してAI0としてPDFへ埋め込む動作を行うことと、
+この動作の影響で縦書きなど一部のグリフで
+正しくないテキスト抽出がされる場合があることを示す。
+そこでPDF/A-2u規格を満たしたまま、
+PDFから原ノ味フォントのToUnicode CMapを削除してAJ1に戻し、
+正しいテキスト抽出ができるようにするツールを作成
+\cite{pdf-rm-tuc}したので紹介する。
+
+\section{AJ1とAI0}
+
+\subsection{フォントとCID}
+
+フォントは、いくつかの文字について、
+統一されたデザインのグリフ（字形）を収録したものであり、
+OpenTypeなど様々な形式がある。
+源ノフォント\cite{sourcehanserif}\cite{sourcehansans}は
+CID-keyed OpenType/CFF形式のPan-CJKフォントである。
+Pan-CJKなので、
+CJK各言語で使用される多数の文字を収録しており、
+収録している各文字について、
+グリフとして形状のアウトラインデータなどを持っている。
+
+\begin{table}[tb]
+  \centering
+  \caption{文字とCIDの対応例}
+  \label{tbl:char-cid}
+  \small
+  \begin{tabular}{c|c|c|c|c}
+         &         &          & 源ノ     & 源ノ \\
+         & Unicode & AJ1      & 明朝     & 角ゴシック \\
+         &         &          & 1.001    & 2.001 \\
+    \hline
+    あ   & U+3042  & CID+843  & CID+1461 & CID+1461 \\
+    漢   & U+6F22  & CID+1533 & CID+24743 & CID+24227 \\
+    ☃   & U+2603  & CID+8218 & CID+1274 & CID+1281 \\
+    \arrayrulecolor[gray]{0.7}\hline\arrayrulecolor[gray]{0}
+    {\gtfamily \CID{23058}} & U+32FF & CID+23058 & --- & CID+2184 \\
+    {\gtfamily \CID{23059}} & 〃     & CID+23059 & --- & CID+65359 \\
+    \arrayrulecolor[gray]{0.7}\hline\arrayrulecolor[gray]{0}
+    \CID{7634} & U+98F4  & CID+7634 & CID+45263 & CID+44358 \\
+    \CID{1151} & 〃      & CID+1151 & CID+61214 & CID+62049 \\
+    \arrayrulecolor[gray]{0.7}\hline\arrayrulecolor[gray]{0}
+    \CID{1887} & U+898B  & CID+1887 & CID+38198 & CID+37348 \\
+    \CID{1887} & U+2F92  & 〃       & 〃        & 〃
+  \end{tabular}
+\end{table}
+
+CID (Character ID)は様々な種類の文字(Character)ひとつひとつに付けられた
+ユニークな識別子(ID)で、0から始まる番号である
+\footnote{0番はCID+0、1番はCID+1のように、
+  ``CID+''の後にIDを10進数の数字で付けて表記する。}%
+\footnote{OpenType登場以前の古いフォント形式にCIDフォントというものもあるが、
+  本稿では触れない。}。
+CID-keyedは「CIDキー方式」とも呼ばれ、
+CIDをキーとして使いたい文字のグリフを指定する方式であることを示している。
+つまり、CID-keyedフォントを用いるアプリケーションは、
+使いたい文字をCID番号で指定し、そのグリフのアウトラインを取得して、
+表示や印字などをする
+\footnote{アプリケーション自身は直接フォントを扱わず、
+  ライブラリやAPIが処理しているケースも多いと思われる。}。
+表\ref{tbl:char-cid}に、いくつかの文字について対応するCIDを示す。
+
+通常、アプリケーションは
+CIDではなくJIS X 0208やUnicodeなどの文字コード規格で
+文字を取り扱っているものが多い。
+JIS X 0208は日本語でよく使われる文字を集め、
+それらを識別する番号を付与したものである
+\footnote{区と点それぞれ10進数で表し「16区1点」や、
+  それぞれ2桁の10進数をハイフンでつなぎ``16-01''などと表記する。
+  これを符号化（エンコーディング）するには
+  ISO-2022-JP・Shift\_JIS・EUC-JPなどを用いる。}。
+UnicodeはJIS X 0208も含めた世界中の様々な規格にある文字などを集め、
+それらを識別する番号を付与したものである
+\footnote{``U+''の後に16進数4～6桁を付けて表記する。
+これを符号化するにはUTF-8・UTF-16・UTF-32などを用いる。}。
+これらはCIDとは全く異なった体系にあるため、
+変換テーブル（マッピング）を用意してCIDに変換する必要がある。
+
+CID-keyedフォントは、
+どのような文字コレクションか（どのような文字を収録しているか）を示す
+ROSという情報を持っている。
+ROSは``Registry''（登録者）、
+``Ordering''（版）、
+``Supplement''（追補）の頭文字で、
+この3つをハイフンでつないだ名前で呼ばれる。
+RegistryはOrdering発行者の名前、
+Orderingは文字コレクションを識別する名前である。
+Supplementは0から始まる番号であり、新版が制定されるときに1増加する。
+例えば、AJ1の最新版であるAdobe-Japan1-7 (AJ1-7)は、
+Registryが``Adobe''、Orderingが``Japan1''、
+Supplementが``7''であることを示している。
+同様にAdobe-Identity-0 (AI0)は、
+Registryが``Adobe''、Oderingが``Identity''、
+Supplementが``0''であることを示している。
+AJ1とAI0では、CIDやマッピングの扱いに異なるところがあるため、
+それぞれについて説明する。
+
+\subsection{Adobe-Japan1 (AJ1)}
+
+Adobe-Japan1 (AJ1) \cite{aj1}は
+日本語で使われる様々な文字を集めた文字コレクションで、
+それらを識別するため、ひとつひとつの文字にCIDを割り当てたものである。
+
+\subsubsection{制定}
+
+\begin{table}[tb]
+  \centering
+  \caption{Adobe-Japan1 (AJ1)}
+  \label{tbl:aj1}
+  \small
+  \begin{tabular}{l|r|rcr|r|r}
+    & \multicolumn{1}{c|}{制定年}
+    & \multicolumn{3}{c|}{追加されたCID}
+    & \multicolumn{1}{c|}{追加数}
+    & \multicolumn{1}{c}{合計} \\
+    \hline
+    AJ1-0 & 1992 &     0 & ～ &  8283 & 8,284 &  8,284 \\
+    AJ1-1 & 1993 &  8284 & ～ &  8358 &    75 &  8,359 \\
+    AJ1-2 & 1993 &  8359 & ～ &  8719 &   361 &  8,720 \\
+    AJ1-3 & 1998 &  8720 & ～ &  9353 &   634 &  9,354 \\
+    AJ1-4 & 2000 &  9354 & ～ & 15443 & 6,090 & 15,444 \\
+    AJ1-5 & 2002 & 15444 & ～ & 20316 & 4,873 & 20,317 \\
+    AJ1-6 & 2004 & 20317 & ～ & 23057 & 2,741 & 23,058 \\
+    AJ1-7 & 2019 & 23058 & ～ & 23059 &     2 & 23,060
+  \end{tabular}
+\end{table}
+
+表\ref{tbl:aj1}にAJ1の制定について示す。
+1992年に最初のAdobe-Japan1-0 (AJ1-0)が制定され、
+CID+0からCID+8283までの8,284個について、どの文字と対応するのか定義された。
+その後は順次CIDを追加したSupplementが制定されていき、
+2019年制定のAdobe-Japan1-7 (AJ1-7)では
+CID+23058とCID+23059の2個が追加された。
+各Supplementには、それ以前のSupplementがすべて含まれているため、
+AJ1-7にはAJ1-0からAJ1-6までの定義も収録されている。
+よって、最新のAJ1-7ではCID+0からCID+23059までの23,060個について、
+どの文字と対応するか定義されている。
+Supplementを区別する必要のあるときはAdobe-Japan1-7やAJ1-7のように表記するが、
+区別する必要のないときはAdobe-Japan1やAJ1のように表記する。
+
+\subsubsection{特徴}
+
+\begin{table}[tb]
+  \centering
+  \caption{文字幅(AJ1)}
+  \label{tbl:width}
+  \small
+  \begin{tabular}{c|rcr}
+    文字幅 & \multicolumn{3}{c}{AJ1 CIDの範囲} \\
+    \hline
+    プロポーショナル
+    &     1 & ～ &   230 \\
+    &  9354 & ～ &  9737 \\
+    & 15449 & ～ & 15975 \\
+    & 20317 & ～ & 20426 \\
+    \arrayrulecolor[gray]{0.7}\hline\arrayrulecolor[gray]{0}
+    半角
+    &   231 & ～ &   632 \\
+    &  8718 & ～ &  8719 \\
+    & 12063 & ～ & 12087 \\
+    \arrayrulecolor[gray]{0.7}\hline\arrayrulecolor[gray]{0}
+    三分
+    &  9758 & ～ &  9778 \\
+    \arrayrulecolor[gray]{0.7}\hline\arrayrulecolor[gray]{0}
+    四分
+    &  9738 & ～ &  9757 \\
+    \arrayrulecolor[gray]{0.7}\hline\arrayrulecolor[gray]{0}
+    全角
+    & \multicolumn{3}{c}{その他}
+  \end{tabular}
+\end{table}
+
+CID-keyedの日本語フォントには、
+文字コレクションにAJ1を用いたものが数多くある
+\footnote{源ノフォントは、日本語用含め、すべて非AJ1である。
+  また、日本語フォントでも非AJ1のものは存在する。}。
+AJ1フォントであれば、どのフォントであっても同じCIDは同じ文字である。
+例えば、表\ref{tbl:char-cid}のように
+AJ1のCID+843は「あ」、CID+1533は「漢」、CID+8218は「☃」などと決まっている。
+また、表\ref{tbl:width}に示す通り、
+CIDごとに、文字幅がプロポーショナル、半角、三分、四分、全角の
+いずれかに決まっている。
+
+また、AJ1はUnicodeなどの、
+通常の文字コード規格では区別しない文字を区別することがある
+\footnote{AJ1は見た目が異なるものを区別するようである。
+  Unicodeなどは「デザインの差」の範囲は区別しない。}。
+例えば、表\ref{tbl:char-cid}にある「令和」の組み文字は、
+AJ1ではCID+23058が横書き用の「{\gtfamily \CID{23058}}」、
+CID+23059が縦書き用の「{\gtfamily \CID{23059}}」、
+というように2種類あるのに対して、
+Unicodeでは区別されておらず両方ともU+32FFである。
+同じく「飴」は、
+AJ1ではCID+7634がJIS2004字形
+\footnote{JIS X 0213:2004の例示字形に準じたもの。}の「\CID{7634}」、
+CID+1151がJIS90字形
+\footnote{JIS X 0208-1990の例示字形に準じたもの。}の「\CID{1151}」、
+というように2種類あるのに対して、
+Unicodeでは区別されておらず両方ともU+98F4である。
+逆にUnicodeでは区別されているがAJ1では区別されないものもある
+\footnote{基本的にUnicodeは、由来などが異なれば見た目が同じでも区別するが、
+  AJ1は区別しない。}。
+例えば、表\ref{tbl:char-cid}にある「見」は、
+UnicodeではU+898BとU+2F92の2種類があるが、
+AJ1ではいずれもCID+1887にマッピングされる
+\footnote{公式の``Adobe-Japan1-UCS2'' \cite{mapping-resources}で
+  CID+1887からUnicodeへ逆変換する際にはU+898Bになる。}。
+
+AJ1は文字とユニークなIDのペアを集めたものなので、
+Unicodeなどと同じ文字コードの一種とも言える。
+しかし、Unicodeなどとは文字を区別するしないの基準をはじめ、
+体系が全く異なる。
+アプリケーションがUnicodeなどからAJ1へ変換するには、
+CMapリソースを使う方法と、OpenTypeのcmapテーブルを使う方法がある
+\footnote{OpenType登場以前の古いCIDフォントはcmapテーブルが無いので、
+  CMapリソースしか使えない。}。
+
+\subsubsection{CMapリソース}
+
+\pTeX や\upTeX が出力したDVIファイルを、
+dvipdfmxでAJ1フォントを使って処理する場合に使用される方法である。
+また、dvips \footnote{かつて広く使われたが、現在はdvipdfmxの方が主流。}で
+AJ1フォントを使うことを前提に出力したPostScriptファイルを、
+PostScriptインタプリタ
+\footnote{Ghostscriptなど。}で処理する際に使用される方法でもある。
+
+CMapリソース\cite{cmap-resource}は、Unicodeなどから、
+AJ1のような文字コレクションのCIDへのマッピングが示されたテーブルである。
+AJ1用（変換先がAJ1）のものは、AJ1のディレクトリ
+\footnote{現在は\texttt{Adobe-Japan1-7}ディレクトリ。}の下にある
+\texttt{CMap}ディレクトリ内に格納されている。
+
+入力（変換元）の文字コードやエンコーディング、
+出力（変換先）で使用したいJIS90字形・JIS2004字形や横書き・縦書き別に、
+ファイルが用意されている。
+これにより、使用するCMapリソースを切り替えることで、
+入力の文字コード・エンコーディングを選択できるだけではなく、
+Unicodeなどでは区別しないJIS90字形・JIS2004字形、
+横書き・縦書きの選択を行うことができる。
+
+例えば素の（OTFパッケージを使用しない）\pTeX は、
+和文文字としてDVIファイルにJISコード
+\footnote{文字コードにJIS X 0208を、
+  エンコーディングにISO-2022-JPを使ったもの。}を出力するため、
+使用すべきCMapリソースは、
+横書き用``H''と縦書き用``V''である。
+これらはJIS90字形のCIDを出力するが、
+JIS2004字形にしたい場合は、
+別途配布\cite{jfontmaps}されている
+横書き用``2004-H''と縦書き用``2004-V''を使えばよい。
+一方、素の\upTeX は、
+和文文字としてDVIファイルにUnicode \footnote{文字コードにUnicodeを、
+  エンコーディングにUTF-16 (UTF-32)を使ったもの。}
+を出力するため、使用すべきCMapリソースは、
+JIS90字形ならば
+横書き用``UniJIS-UTF16-H''と縦書き用``UniJIS-UTF16-V''、
+JIS2004字形ならば
+横書き用``UniJIS2004-UTF16-H''と縦書き用``UniJIS2004-UTF16-V''である
+\footnote{``UniJIS-UTF16-H''や``UniJIS2004-UTF16-H''は、
+  \upTeX で全角幅が前提となっているクォート4文字
+  （U+2018「\ltjjachar`‘」U+2019「\ltjjachar`’」
+    U+201C「\ltjjachar`“」U+201D「\ltjjachar`”」）
+  をプロポーショナル幅のグリフにマッピングしている。
+  そこで、これら4文字だけをVFで別のJFM
+  （通常のJFM ``*-h''に対してクォート用は``*-hq''） に割り当て、
+  ``*-hq''はこれらが全角幅にマッピングされる``UniJIS-UCS2-H''を使う設定にし、
+  文字幅の問題発生を回避している。}。
+これらのCMapリソースはいずれも\TeX \ Liveに含まれており、
+\TeX \ Liveで\pTeX ・\upTeX が使えるならばすべて使えるはずである。
+
+CMapリソースを使う方法は、
+条件に応じてフォントとCMapリソースの双方を指定する必要があり、
+アプリケーションの設定項目は煩雑になりがちである。
+
+\subsubsection{cmapテーブル}
+
+\LuaTeX や\XeTeX でOpenTypeフォントを扱う場合に使用される方法である。
+また、LilyPond \cite{lilypond}ではPDF出力、PostScript出力、
+EPS出力のいずれでも、この方法が使用される。
+
+cmapテーブルはOpenTypeフォントのファイル内に含まれているテーブルで、
+CID-keyedの場合は文字コードからCIDへのマッピングを示したものである。
+CMapリソースとほぼ同じ役割だが、
+異なる点として、
+CMapリソースはフォントファイルとは独立した別のファイルであるのに対して、
+cmapテーブルはフォントファイルに内蔵したものであることが挙げられる。
+また、CMapリソースは複数のファイルを切り替えることで、
+変換元の文字コードやエンコーディングを選択したり、
+変換先のJIS90字形・JIS2004字形や横書き・縦書きを選択することができるが、
+cmapテーブルでは基本的に変換元はUnicodeのみ
+\footnote{規格上はUnicode以外のcmapテーブルも存在しているが、
+  現在はUnicodeが推奨され、ほとんど使われない。}、
+変換先も固定
+\footnote{JIS90字形・JIS2004字形どちらになるかはフォントによって異なる。
+  また、必ず横書き用となる。}で切り替えることはできず、
+字形や縦横の選択にはOpenType featureのような別の仕組みを使う
+\footnote{cmapテーブルで得たデフォルトのCIDから、
+  GSUBテーブルを用いて異なる字形や縦書きのCIDを得る。}。
+\LuaTeX や\XeTeX はもちろん、LilyPondもこのOpenType featureに対応しており、
+字形などの切り替えが可能である。
+
+cmapテーブルを使う方法は、
+CMapリソースを使う方法とは異なり、フォントを指定するだけで完結し、
+字形などの切り替えもOpenType featureに統一されているため、
+アプリケーションの設定項目をシンプルにすることができる。
+
+\subsection{Adobe-Identity-0 (AI0)}
+
+Adobe-Identity-0 (AI0)は「特別な目的」に使われる文字コレクションで、
+何か特定の文字を集めたものではなく、
+文字とCIDの組み合わせを規格として制定したものではない。
+
+\subsubsection{特徴}
+
+AJ1は「日本語のため」の文字コレクションであるのに対して、
+AI0は「特別な目的」の文字コレクションである、という違いがある。
+
+AJ1は「日本語のため」に、
+日本語の様々な文字を集めてCIDを割り当てたものである。
+AJ1フォントには、AJ1で定義されていない文字
+（日本語では使われない文字）や、
+同じ文字の複数バリエーションを収録することはできない。
+AJ1フォント同士ならば、
+別のフォントであっても、同じCIDは必ず同じ文字でなければならない。
+一方、AI0は文字もCIDの割り当ても文字幅も、何も決められておらず、
+フォント制作者が自分で設定した「特別な目的」に合わせて
+自由に決めることができる。
+つまり、AJ1で定義されていない文字でも、
+同じ文字の複数バリエーションでも収録できるし、
+別のフォントでは、同じCIDが別の文字になって構わない。
+つまり、AI0はフォント制作者が個々のフォントごとに決めた、
+独自の文字コレクションが使われていることを意味している。
+
+源ノフォントはAI0のフォントであり、
+表\ref{tbl:char-cid}に示すように、
+源ノ明朝と源ノ角ゴシックの間でもCIDが異なる。
+現在はウェイトが違うだけならば同じCIDだが、
+今後は変更されるかもしれないし、
+バージョンが違えばCIDが異なるかもしれない。
+また、AJ1と同じ字（同じUnicode）であっても、
+AJ1の文字幅とは異なっているものがある。
+
+アプリケーションがUnicodeなどからCIDへ変換するには、AJ1と同様、
+CMapリソースを使う方法とOpenTypeのcmapテーブルを使う方法がある。
+
+\subsubsection{CMapリソース}
+
+AI0フォントに対してAJ1のCMapリソースを使うと、ROSの不一致
+\footnote{RegistryとOrderingの双方が一致している必要がある。
+  Supplementは一致しなくても、
+  使用するCIDがフォントに含まれていれば問題ない。}で
+エラーとなる
+（DVIドライバにdvipdfmxを使用した場合など）か、
+文字とCIDの対応関係が異なるため、盛大に文字化けする
+（DVIドライバにdvipsを使用して出力したPostScriptファイルを、
+  Ghostscriptで処理した場合など）。
+そのため、フォントごとのCMapリソースが必要となる。
+
+\begin{table}[tb]
+  \centering
+  \caption{源ノフォントの日本語用CMapリソース}
+  \label{tbl:sourcehan-cmap}
+  \small
+  \begin{tabular}{c|c}
+    \hline
+    源ノ & UniSourceHanSerifJP-UTF32-H \\
+    \arrayrulecolor[gray]{0.7}\cline{2-2}\arrayrulecolor[gray]{0}
+    明朝 & UniSourceHanSerifJP-UTF16-H \\
+    \hline
+    源ノ       & UniSourceHanSansJP-UTF32-H \\
+    \arrayrulecolor[gray]{0.7}\cline{2-2}\arrayrulecolor[gray]{0}
+    角ゴシック & UniSourceHanSansJP-UTF16-H
+  \end{tabular}
+\end{table}
+
+源ノフォントでは、表\ref{tbl:sourcehan-cmap}の通り、
+CMapリソースが配布されている
+\footnote{源ノフォントは言語ごとに字形を切り替えるため、
+  CMapリソースが言語ごとに分かれている。}%
+\footnote{UTF-32はmaster branchに、
+  UTF-16はrelease branchのResourcesディレクトリにある。}が、
+変換元の文字コード・エンコーディングはUnicodeのUTF-32とUTF-16だけであり、
+変換先はJIS2004字形の横書きだけである。
+つまりUnicodeではなくJISコードでDVIファイルが出力される
+\pTeX では使うことができない。
+\upTeX はUnicodeでDVIファイルが出力されるので、
+これらを正しく設定することができれば使用できるが、
+JIS2004字形の横書きしか使うことができない上、
+一部のクォートで文字幅の問題が発生し回避できない
+\footnote{``UniJIS-UTF16-H''などと同様、
+  \upTeX で全角幅が前提のクォート4文字が
+  プロポーショナル幅のグリフにマッピングされているが、
+  全角幅にマッピングするCMapリソースが無くて回避できない。}%
+\footnote{\upTeX でDVIドライバにdvipdfmxを使う場合は、
+  後述のcmapテーブルを使う設定にすれば、これらの問題は発生しない。}。
+さらに、一部の文字幅がAJ1と異なっているため、
+そういった文字を使うと問題が発生することがある
+\footnote{JFMの文字幅と源ノフォントの文字幅が異なると問題が発生する。}。
+また、AI0であるがゆえに、
+フォントごとにCMapリソースのインストールと設定が必要な上、
+フォントのバージョンが変わるとマッピングが変更される可能性があり、
+新しいCMapリソースへの入れ替えを要するため、非常に煩雑である。
+
+\subsubsection{cmapテーブル}
+
+cmapテーブルを使う方法では、
+AJ1フォントと同様に利用可能である。
+つまり、\LuaTeX や\XeTeX でも、LilyPondでもAJ1と同様に利用でき
+\footnote{AJ1・AI0ともに、フォント名もしくはフォントファイル名と、
+  字形などOpenType featureの指定をする程度。}、
+字形の切り替えや縦書きもAJ1と同程度に使うことができる
+\footnote{\LuaTeX ではluatexja-presetパッケージで
+  源ノフォントを設定することも可能。}。
+ただし、AJ1ではないためluatexja-otfパッケージの機能は一部制限される
+\footnote{Unicodeで表現できないものは使えない。
+  \backslash CIDによる直接指定は、
+  漢字の異字体程度ならばIVSで代替される。}。
+
+\upTeX でDVIドライバにdvipdfmxを使う場合は、
+設定でCMapリソースではなくcmapテーブルを使うようにする
+\footnote{dvipdfmxのエンコーディング設定をCMapリソース名でなく
+  ``unicode''にすると、CMapリソースを経由しないUnicode直接指定となり、
+  cmapテーブルが使われる。}%
+\footnote{\TeX \ Live 2018（一部\TeX \ Live 2017）以降が必要。}ことができ、
+字形の切り替えや縦書きも含めて利用可能である
+\footnote{\TeX \ Live 2019で、kanji-config-updmapコマンドを用いて
+  源ノフォントを使用したdvipdfmxの設定ができるようになった。}%
+\footnote{\upTeX で全角幅が前提のクォート4文字は、
+  これらだけをVFで割り当てたJFM ``*-hq''に対して、
+  OpenType featureで全角幅``fwid''を設定し、
+  全角幅のCIDを得ることで、文字幅問題を回避している。}。
+ただし、AJ1を前提としたOTFパッケージの機能は大部分が利用できない。
+また、AJ1と文字幅が異なる文字を使用した場合には問題が発生する。
+
+\section{源ノフォントを使う}
+
+ここまでに、源ノフォントを含むAI0のフォントが、
+一部の\TeX エンジン・DVIドライバやGhostscriptで使用困難であることを示した。
+使用困難となるのは、\pTeX を使った場合と\upTeX でもDVIドライバにdvipsなど
+dvipdfmx以外を使った場合である。
+これらについて、
+問題を回避して何とか源ノフォントを使う方法を考えてみる。
+
+\subsection{\pTeX で使う}
+
+モダンな\LuaTeX や\XeTeX に移行できず、
+\upTeX にすることもできないが、源ノフォントを使いたい、
+というケースが考えられる。
+例えば、\texttt{ipsj.cls} \cite{ipsj.cls}のように\pLaTeX のみの対応で、
+他の\TeX エンジンに対応していないクラスファイルを使用する必要がある
+場合などである。
+こうした場合には、
+CMapリソースを新しく作成する方法、
+VFを使う方法、
+DVIファイルを書き換える方法によって、
+源ノフォントを利用できるようにする
+\footnote{他にも、DVIドライバを拡張するという方法も考えられるが、
+  本稿では触れない。}
+ことができる。
+
+\subsubsection{CMapリソースを作成する方法}
+
+\pTeX は、出力するDVIファイルがJISコードだが、
+源ノフォントのCMapリソースに、変換元がJISコードのものが無くて使用困難であった。
+ただ、そういったCMapリソースを作成することは可能であり、
+それを利用して\pTeX で源ノフォントを使用する
+試み\cite{ptex-jis-sourcehan}がある。
+これは、源ノフォントのcmapテーブルをもとにCMapリソースを生成しているので、
+JIS2004字形で横書きのCMapリソースだけしかなく、
+クォート文字幅の問題も発生する。
+そういった問題を無視できれば、dvipdfmxでPDF生成できるし、
+dvipsで生成したPostScriptファイルを
+Ghostscriptで処理してPDF生成することもできる。
+
+JIS90字形や縦書きのCMapリソースを作成することは可能
+\footnote{GSUBテーブルの``jp90''や``vert''をもとに
+  CIDを差し替えればよさそうである。}と考えられる。
+また、クォート文字幅の問題もCIDを差し替えることで
+解消できると思われる。
+これによって、
+\texttt{\textcompwordmark .tex}ファイル
+をそのまま何も変更せず、\pTeX で処理したDVIファイルから
+源ノフォントを利用したPDFを生成することができる。
+しかし、AJ1と文字幅が異なっている文字を使用すると、
+dvipdfmxで後続文字の位置がおかしくなるなど、組版に影響を及ぼしてしまう。
+また、フォントごとにCMapリソースを作成しなければならず、
+設定も非常に煩雑になってしまう。
+
+\subsubsection{VFを使う方法}
+
+\pTeX が出力したDVIファイルはJISコードだが、
+これをVF (Virtual Font)の仕組みを使ってUnicodeへ変換することによって、
+\upTeX 向けの設定を経由して源ノフォントを使う方法がある。
+これを実装したPXufontパッケージ\cite{pxufont}は、
+まず、\texttt{\textcompwordmark .tex}ファイル
+中でPXufontパッケージを使うことで、
+\pTeX から見えるJFMをjisやjisgなどからzu-jisやzu-jisgといった、
+``zu-''という名前で始まるものに置き換える。
+これによって、DVIファイル中に現れるJFM名が
+jisなどからzu-jisなどに変わることになる。
+次に、dvipdfmxがDVIファイル中のJFM名からzu-jis.vfなどを読み込む。
+これらのVFは、JISコードからUnicodeへの変換が行われるとともに、
+置き換え先のJFMに\upTeX 用のuprml-hやuprml-hqが指定されている。
+その結果、\upTeX が出力したDVIファイルでVFを処理した後と同じ状態となる。
+後は、\upTeX 用のdvipdfmx設定に従って源ノフォントが使用される。
+
+残念ながら\texttt{\textcompwordmark .tex}ファイル
+を何も変更せずに適用することはできないし、
+\texttt{ipsj.cls}はPXufontパッケージで
+フォント名を置き換えることができず失敗\cite{pxufont-ipsj-fail}してしまう。
+AJ1と文字幅が異なっている文字を使用した場合の問題も残る。
+
+\subsubsection{DVIファイルを書き換える方法}
+
+\texttt{\textcompwordmark .tex}ファイルを一切書き換えず、
+\pTeX が出力したDVIファイルを書き換えることで源ノフォントを利用できる。
+DVIasm \cite{dviasm}は、
+DVIファイルを逆アセンブルしてテキストファイルへ書き出すこと、
+テキストファイルをアセンブルしてDVIファイルを作成すること、
+ができるツールであり、\pTeX のDVIファイルにも対応している。
+DVIファイルを逆アセンブルすることで
+デバッグに資することができる有用なツールであるが、
+テキストファイルからのアセンブルもできるため、
+DVIファイルを書き換えるような用途にも有用である。
+
+この方法で、\pTeX が出力したDVIファイル中のJFM名jisおよびjisgを、
+zu-jisおよびzu-jisgに書き換える
+\footnote{DVIasmは、
+  \texttt{\textcompwordmark --ptex}オプション
+  があるとDVIファイルのset2がJISコード、
+  無ければUnicodeとみなされ、テキストファイルのUTF-8と相互変換する。
+  これを利用し、逆アセンブル時は\texttt{\textcompwordmark --ptex}オプション
+  を付与し、
+  アセンブル時には付与しないようにすると、
+  JISコードのDVIファイルからUnicodeのDVIファイルへ変換することができる。
+  ただし、JFM名もUnicode用に書き換えなければならないが、
+  \upTeX 標準のupjisr-h系は\pTeX のjis系とメトリック非互換で使えない。
+  古いujis系ならば概ね使えるが、
+  クォート4文字がVFで\pTeX のrml系に割り当てられ、
+  源ノフォントにすることができない。}
+シェルスクリプトの例を示す。
+
+\begin{tcolorbox}[left=0mm,right=0mm,top=0mm,bottom=0mm]
+\begin{lstlisting}
+#!/bin/sh
+
+INPUT_DVI_FILE=$1
+OUTPUT_DVI_FILE=$2
+
+TMP_FILE=`mktemp`
+
+dviasm --ptex ${INPUT_DVI_FILE} | \
+    sed -e 's/^fntdef: jis (/fntdef: zu-jis (/g' | \
+    sed -e 's/^fntdef: jisg (/fntdef: zu-jisg (/g' | \
+    sed -e 's/fnt: jis (/fnt: zu-jis (/g' | \
+    sed -e 's/fnt: jisg (/fnt: zu-jisg (/g' \
+        > ${TMP_FILE}
+
+dviasm --ptex --output=${OUTPUT_DVI_FILE} ${TMP_FILE}
+
+rm ${TMP_FILE}
+\end{lstlisting}
+\end{tcolorbox}
+
+これで出力したDVIファイルは、JFM名がzu-jisなどに書き変わっているため、
+PXufontパッケージのVFによってUnicode化され、
+\upTeX の設定が使われるようになる。
+よって、\pTeX でも\texttt{\textcompwordmark .tex}ファイルを書き換えず、
+また、\texttt{ipsj.cls}のようなPXufontパッケージで
+フォント名を置き換えることができない場合でも、
+源ノフォントを利用することができるようになる。
+ただし、AJ1と文字幅が異なっている文字を使用した場合の問題は残る。
+
+\subsection{\upTeX で使う}
+
+\upTeX では、DVIドライバがdvipdfmxであれば
+（AJ1文字幅の問題に触れる文字を使わない限り）
+源ノフォントを使用できるが、
+dvipsの場合は困難である。
+源ノフォントのCMapリソースは配布されているので、
+これらを使えばdvipsを利用できなくはないが、
+字形の切り替えや縦書きの対応ができず、
+クォート文字幅の問題が発生してしまう。
+とはいえ、\pTeX と同様、
+これらを解消したCMapリソースを作成することは可能だと考えられる。
+しかし、AJ1文字幅の問題は解消できないし、
+フォントごとにCMapリソースを作成しなければならず、
+設定が非常に煩雑という点も同様である。
+
+\subsection{\TeX エンジンを移行する}
+
+\pTeX にしか対応していないクラスファイルに手を入れるなどして、
+源ノフォントが使える\TeX エンジンに対応させて移行する方法である。
+
+\subsubsection{新規作成する}
+
+レイアウトやフォーマットが厳密には決まっていないような場合には、
+クラスファイルを新規に作成してしまう方法が取り得る。
+FIT情報科学技術フォーラム\cite{fit2019}では、
+過去に\pLaTeX 用テンプレートファイルが配布されていたようだが、
+現在は存在しない。
+また、原稿はPDFでの提出であり、
+基本フォーマット（用紙サイズ、マージン、フォントなど）を厳守すれば、
+どのように作成してもよい、とされている。
+そこで、基本フォーマットをもとに、
+\LuaLaTeX に対応したクラスファイルを作成\cite{FITpaper-class}することで、
+源ノフォントを利用することができた
+\footnote{筆者はFIT2018向けに、
+  このクラスファイルと源ノフォントを使い、
+  \LuaLaTeX で組版した原稿を投稿した。}。
+
+\subsubsection{改変する}
+
+前述の通り、\texttt{ipsj.cls}は\pLaTeX のみ対応している。
+これを改変して\upLaTeX 用にする試み\cite{up-ipsj.cls}をした。
+これは\pLaTeX で組版した場合と似たような組版結果になることを目指したが、
+不具合もある
+\footnote{古いujis系を使っているため、
+  クォート4文字が源ノフォントにならない。}。
+また、研究報告向ならば、
+原稿はPDF提出なので、
+この改変クラスファイルを使う余地はあるかもしれないが、
+論文誌向けならば、
+PDF提出は査読用だけであり、
+最終原稿では\texttt{\textcompwordmark .tex}ファイルなどを提出する
+\footnote{プロが組版して論文誌に掲載される。}ことになるので、
+改変クラスファイルを使うことはできない。
+
+\section{原ノ味フォント}
+
+ここまで示してきたように、
+源ノフォントは一部の\TeX エンジン・DVIドライバや
+Ghostscriptでは使用困難だったり設定が煩雑であるほか、
+OTFパッケージのようなAJ1フォントが前提となるものは、ほぼ使うことができない。
+また、PDFからのテキスト抽出に問題が発生するケースもある。
+これらの大部分は源ノフォントがAI0フォントであるがゆえに発生する問題であり、
+AJ1フォントであれば発生しないものである。
+
+そこで、AI0である源ノフォントをAJ1になるように組み替えた、
+「原ノ味フォント」\cite{haranoaji}を制作した。
+「原ノ味」というのは、
+源ノフォントからグリフやテーブルが抜けていることを表すために
+% 「氵」U+6C35 → AJ1-4 CID+14689 源ノ・原ノ味とも搭載
+「\ltjruby{氵}{さんずい}」
+を取り、AJ1をもじってAJIにして、
+音から「味」という字をあてたものである。
+本フォントは源ノフォントの派生フォントになるため、
+SIL Open Font License 1.1 \cite{sil-ofl}が適用される。
+
+\subsection{制作の経緯}
+
+筆者は\texttt{ipsj.cls} \cite{ipsj.cls}で源ノフォントを使いたいと考え、
+様々な方法を試行してきたが、
+これまでに述べてきたような問題が発生し、一筋縄ではいかなかった。
+AJ1フォントであれば問題ないのだが、
+残念ながら筆者の環境にはこの用途に適したAJ1フォントが無い
+\footnote{唯一、Acrobat Readerに付属している小塚フォントはあるが、
+  \TeX を含む他ソフトウェアでの利用はライセンス的に不可と思われる。}。
+一方、源ノフォントは
+SIL Open Font License 1.1に基づく
+オープンソースのフォントである。
+つまり、一定の条件の下で改変や再配布が認められている。
+よって、源ノフォントのグリフを使ったAJ1フォントを作ること、
+そしてそれを再配布することは可能ではないか。
+そう考えて原ノ味フォントの制作を開始した。
+
+\subsection{搭載グリフ}
+\label{sec:glyphs}
+
+源ノフォントが搭載している、かつ、AJ1への対応が取れたものを搭載している。
+
+\begin{itemize}
+\item 漢字
+  \begin{itemize}
+  \item Adobe-Japan1-6漢字グリフすべて搭載
+    \begin{itemize}
+    \item ルビ用の「注」 \\
+      U+6CE8 U+E0102 (AJ1 CID+12869) \\
+      は非搭載
+      \footnote{AJ1の「漢字グリフ」範囲外で漢字扱いではない。}
+    \end{itemize}
+  \item JIS X 0208漢字グリフすべて搭載
+  \item JIS X 0213漢字グリフすべて搭載
+  \end{itemize}
+\item 非漢字 \\
+    （ひらがな、カタカナ、英数字、記号類）
+  \begin{itemize}
+  \item JIS X 0208横書きグリフすべて搭載
+    \begin{itemize}
+    \item JIS90字形（CMapリソース``H''）
+    \item JIS2004字形（CMapリソース``2004-H''）
+    \end{itemize}
+  \item JIS X 0208縦書きグリフは以下の4グリフを除きすべて搭載
+    （例示は横書きグリフ）
+    \begin{itemize}
+    \item JIS90字形（CMapリソース``V''）
+      \begin{itemize}
+      \item 「‖」01-34, U+2016 (AJ1 CID+7895) \\
+        `DOUBLE VERTICAL LINE'
+      \end{itemize}
+    \item JIS2004字形（CMapリソース``2004-V''）
+      \begin{itemize}
+      \item 「‖」01-34, U+2016 (AJ1 CID+7895) \\
+        `DOUBLE VERTICAL LINE'
+      \item 「\ltjjachar`°」01-75, U+00B0 (AJ1 CID+8269) \\
+        `DEGREE SIGN'
+      \item 「\ltjjachar`′」01-76, U+2032 (AJ1 CID+8273) \\
+        `PRIME'
+      \item 「\ltjjachar`″」01-77, U+2033 (AJ1 CID+8283) \\
+        `DOUBLE PRIME'
+      \end{itemize}
+    \end{itemize}
+  \item JIS X 0213非漢字グリフには抜けあり
+  \item その他AJ1-6非漢字グリフには抜けあり
+  \end{itemize}
+\end{itemize}
+
+抜けているグリフのCIDにはダミーグリフ
+（□の中に\ltjjachar`×が入ったような形）が入っている
+\footnote{原ノ味フォント20190501以降の仕様。}。
+上記で具体的に記載した非搭載グリフ
+（ルビ用1グリフ、非漢字縦書き4グリフ）は、
+いずれも源ノフォントが搭載していないため、
+原ノ味フォントに搭載できないものである。
+
+非漢字の一部に、源ノフォントのAJ1文字幅問題を解消するため、
+文字幅を強制的にAJ1に合わせた
+\footnote{原ノ味フォント20190824以降の仕様。}
+ものがある。
+該当のグリフを使うと、左に寄って表示されたり、前後の文字に重なったり、
+不格好な表示になることがあるが、
+源ノフォントで問題となるような、
+他のグリフの位置に影響を及すことはなくなっているはずである。
+
+\subsection{生成プログラム}
+
+単純にフォントファイルだけを公開するのではなく、
+高品質なフォントをオープンソースで公開したAdobeやGoogleをはじめとする
+関係各位に敬意を表する意味でも、
+原ノ味フォント生成プログラム\cite{haranoaji-generator}を
+オープンソースライセンス
+\footnote{生成したフォントはSIL Open Font License 1.1だが、
+生成プログラムはBSD 2-Clauseである。}で公開することとした。
+本稿ではプログラムの概要を説明する。
+詳細はドキュメントやソースを参照いただきたい。
+
+\subsubsection{動作}
+
+まず、源ノフォントのOTFファイルをfonttools \cite{fonttools}のttxでXMLにし、
+C++でXMLやCMapリソースなどからCIDの対照表を作り、
+C++やsedで変換、
+最後に再びttxでOTFファイルを生成する、
+という方法を採った。
+C++はC++11対応コンパイラ、XMLライブラリはpugixml \cite{pugixml}、
+その他GNU Makeにsedやshなどがあれば動作させることができる。
+
+\subsubsection{CIDの対応}
+
+源ノフォントはAI0フォントであり、CIDの並び方がAJ1と異なる。
+AJ1化するためにはAI0 CID→AJ1 CID対照表が必要となる。
+源ノフォントは日本語用(Region-specific Subset OTF)であっても、
+2万近い数のグリフがあるため、人手で対照表を作るのは困難である。
+そこで、自動的に対照表を作るようにした。
+
+\paragraph{■Unicodeを介した変換}
+
+源ノフォントのcmapテーブルはUnicode→AI0 CIDという変換表である。
+一方、CMapリソース``UniJIS2004-UTF32-H''は
+Unicode→AJ1 CIDという変換表である。
+そこで、cmapテーブルを逆変換して、AI0 CID→Unicodeとし、
+さらにCMapリソースの変換を重ねて、
+AI0 CID→Unicode→AJ1 CIDという変換にすることで、
+AI0 CID→AJ1 CIDの対照表を作っている。
+
+この方法は、
+源ノフォント以外のAI0フォントでも利用することができる。
+また、源ノフォントをAJ1以外（つまり日本語以外）のROSに組み替える際にも、
+同様に利用することができるだろう。
+
+\paragraph{■漢字}
+
+Unicodeを介した変換だけでは、漢字の異字体などに対応できない。
+だが、源ノフォントでは\texttt{aj16-kanji.txt}という
+AJ1 CIDと源ノフォントのグリフ名の対応表が配布されている。
+さらに、
+\texttt{AI0-SourceHanSerif}と
+\texttt{AI0-SourceHanSans}という、
+AI0 CIDとグリフ名の対応表も配布されている。
+これらをつなげばAI0 CID→AJ1 CIDの対照表を作ることができる。
+ただし、漢字グリフしか含まれていない。
+
+この方法は、源ノフォントのみ、
+しかもAJ1に対してだけ利用することができるが、
+異字体やJIS90字形・JIS2004字形も含め、
+全漢字グリフの対照表が得られるので、非常に強力である。
+
+\paragraph{■縦書きなど}
+
+源ノフォントのGSUBテーブルから、
+縦書き用OpenType feature ``vert''を読み込むと、
+横書き用AI0 CID→縦書き用AI0 CIDという変換表が得られる。
+AJ1のGSUBも配布されている\cite{aj1}ので、ここから、
+横書き用AJ1 CID→縦書き用AJ1 CIDという変換表が得られる。
+前者を逆変換して、AI0 CID→AJ1 CID対照表を介してつなげると、
+縦書き用AI0 CID→横書き用AI0 CID→横書き用AJ1 CID→縦書き用AJ1 CIDとなり、
+縦書き用の対照表が得られる。
+
+縦書き``vert''以外にも、CIDが1対1対応になっている、
+全角幅``fwid''、半角幅``hwid''、
+プロポーショナル幅``pwid''、ルビ``ruby''についても、
+同様の方法で対照表を作ることができる。
+
+\subsubsection{OpenTypeテーブルの変換}
+
+ほとんどのテーブルを変換している。
+フォント名称などの置き換え、
+対照表に従ったAI0 CID→AJ1 CIDへの置き換え、
+置き換えることができなかったAI0 CIDの削除、
+欠番になっているAJ1 CIDへのダミーグリフ挿入、
+AJ1文字幅への変更などを実施している。
+
+\subsection{\pTeX ・\upTeX で使う}
+
+源ノフォントと異なり比較的簡単に使うことができる。
+フォントファイルとマップファイルを適切に配置すれば普通に使える。
+ただし搭載しない（抜けている）グリフを使うことはできないし、
+文字幅を変更したグリフで表示が不格好になるものもあるので、
+\ref{sec:glyphs}節「搭載グリフ」や
+原ノ味フォントのドキュメントなどを参照して、
+ご注意いただきたい。
+
+\subsubsection{マップファイル}
+
+マップファイルは
+原ノ味フォントの配布サイト\cite{haranoaji}にて配布している。
+適切に配置して\TeX \ Liveのkanji-config-updmapコマンドを使えば、
+dvipdfmxとdvips双方で原ノ味フォントを使うことができるようになる。
+
+\subsubsection{\texttt{ipsj.cls}}
+
+\texttt{ipsj.cls}には、
+著者が組版するときのためのクラスオプション``submit''がある。
+``submit''が無ければ、プロの環境用として和文フォントに
+明朝・ゴシックそれぞれ2ウェイトずつ使う。
+``submit''を付けると、\pTeX 環境であれば必ず使えるであろう、
+それぞれ1ウェイトずつしか使わないようになる。
+\footnote{欧文フォントもHelveticaを使わなくなるなど少し変わるようだが、
+  今どきの環境であれば、わざわざ除外しなくても
+  Nimbus Sansで代替できるだろう。}%
+\footnote{クラスオプション``submit''有無は、
+  論文誌向け・研究報告向け、どちらでも同様の動作である。
+  つまり、クラスオプション``techrep''有無とは独立の設定である。}。
+以下のdvipdfmx用マップファイルは、プロ環境用の和文2ウェイトずつ、
+全4フォントを原ノ味フォントで代替する設定である。
+クラスオプション``submit''を外してこのマップファイルを使うと、
+見た目が論文誌に掲載されている、プロが組版した論文に近くなる。
+
+\begin{tcolorbox}[left=0mm,right=0mm,top=0mm,bottom=0mm]
+\begin{lstlisting}
+rml		H	HaranoAjiMincho-Light.otf
+gbm		H	HaranoAjiGothic-Regular.otf
+futomin-b	H	HaranoAjiMincho-Regular.otf
+futogo-b	H	HaranoAjiGothic-Medium.otf
+\end{lstlisting}
+\end{tcolorbox}
+
+なお、論文誌向け（クラスオプション``techrep''無し）で使う場合は、
+著者は最終原稿として\texttt{\textcompwordmark .tex}ファイルを提出し、
+プロが本物のフォントを使って組版するため、本設定は関係ない。
+最終原稿前の査読用については、
+著者が組版しPDF提出するため、本設定が使えるかもしれないが、
+フォントの違いが査読に影響することはないはずであり、
+あくまでも自己満足の域に過ぎないと思われる。
+一方、研究報告向け（クラスオプション``techrep''有り）で使う場合は、
+最終原稿が著者組版のPDF提出なので、本設定が使えるかもしれないが、
+そもそも見た目が論文誌のように統一されておらず、
+どれが本物に近いとは言い難く、これも自己満足に近いと思われる。
+
+\subsection{その他の環境で使う}
+
+\LuaTeX や\XeTeX でも、LilyPondでも、
+他のフォントと同様に利用可能である。
+IVSやOpenType featureも使うことができる。
+Ghostscriptでも他のAJ1フォントと同様の設定で利用可能である。
+
+ただし、\pTeX や\upTeX で使う場合と同様、
+使えないグリフや表示が不格好なグリフがあるので、
+\ref{sec:glyphs}節「搭載グリフ」やドキュメントなどを参照して、
+ご注意いただきたい。
+
+\section{ToUnicode CMap}
+
+ToUnicode CMapはPDFからテキスト抽出する際に使われる、
+いくつかある機構のうちの一つである。
+PDFでCID-keyedフォントが使われていて、
+エンコーディングがIdentity-HやIdentity-Vである場合
+\footnote{dvipdfmxでCID-keyedフォントを使って生成したPDFはそうなる。}、
+PDF中の文字はCIDで指定されており、
+Unicodeのような文字コードは失われている。
+テキスト抽出するには、使われているCIDがどのUnicodeに対応するか、
+というテーブルが必要となる。
+これがToUnicode CMapである。
+
+\subsection{テキスト抽出}
+
+AJ1フォントの場合は、PDF内にToUnicode CMapが埋め込まれていなくても、
+PDF viewerが適切なAJ1のToUnicode CMapを持っていれば
+\footnote{CJKをまともに扱うことができるPDF viewerであれば
+  持っているはずである。
+  持っていないものでも追加インストールなどで
+  対応可能なものが多いと思われる。}、
+テキスト抽出可能である。
+一方、AI0フォントの場合は、CIDと文字の関係がフォントごとに異なるため、
+PDFにToUnicode CMapが埋め込まれていないとテキスト抽出できない。
+
+\subsection{ToUnicode CMapの自動生成}
+
+\pTeX や\upTeX で使われるdvipdfmxや、
+\XeTeX で内部的に使われるxdvipdfmxは、
+AJ1フォントに対してはToUnicode CMapの生成や埋め込みをせず、
+AI0フォントに対しては生成して埋め込む、という動作になっており、
+いずれのフォントでもテキスト抽出できるよう配慮されている。
+また、\LuaTeX は、フォントに関係なくToUnicode CMapを生成して埋め込む
+\footnote{さらに、フォントがAJ1であってもAI0に書き換えてしまう。}ため、
+テキスト抽出は可能である。
+一方、Ghostscriptは、PDFを出力する際はフォントに関係なく
+ToUnicode CMapの生成や埋め込みをしない。
+そのため、AJ1フォントはテキスト抽出できるが、
+AI0フォントはテキスト抽出できないということになる。
+なお、LilyPondはPDFを出力する際、内部的にGhostscriptを使用している。
+そのため、Ghostscript同様、AJ1フォントはテキスト抽出できるが、
+AI0フォントはテキスト抽出できない。
+
+\subsubsection{逆変換による自動生成}
+
+\TeX \ Live 2019の
+dvipdfmx（\XeTeX で使われるxdvipdfmxも含む）や \LuaTeX は、
+使用したCIDでcmapテーブルを参照し、
+この逆変換でToUnicode CMapを生成する。
+この方法はDVIの文字コードが何であっても動作するが、
+逆変換に起因する問題が発生してしまう。
+
+cmapテーブルは、表\ref{tbl:char-cid}にある「見」のように、
+複数のUnicodeに対して同一のCIDを割り当てている場合があり、
+逆変換の際にはどちらのUnicodeを使うか判断する必要がある。
+どちらがよりふさわしいかは
+個々のCIDによって異なるため個別に判断する必要がある。
+例えば、「見」の場合は、
+通常の漢字として使われるのはU+898Bなので、これを選択するべきであるが、
+間違っていると意図しないテキスト抽出結果になってしまう。
+
+また、表\ref{tbl:char-cid}では、
+「{\gtfamily \CID{23059}}」のような縦書き用のグリフや
+JIS2004字形・JIS90字形でデフォルトでない方のグリフ
+（JIS2004字形のがデフォルトの源ノフォントならば、
+  「\CID{1151}」のようなJIS90字形のグリフ）は、
+そもそもcmapテーブルに存在しないので逆変換が生成できず
+\footnote{GSUBテーブルには存在するはずなので、
+  cmapテーブルで見つからなければ、
+  GSUBテーブルで探してデフォルトのCIDを見つけ、
+  改めてcmapテーブルで探す、という方法を取れば見つけられるはずではある。}、
+テキスト抽出の際に抜けてしまう。
+
+さらに、縦書き用のグリフなどのデフォルトではないグリフが、
+デフォルトのグリフとは別のUnicodeからマップされている場合がある。
+例えば、開き括弧「（」U+FF08は縦書きでは「︵」になるが、
+これはU+FF08とは別にU+FE35からマップされている。
+そのため、縦書き中の開き括弧を含んだ文字列をテキスト抽出した場合、
+本来であればU+FF08が抽出されるべきだが、U+FF35になってしまい、
+結果がおかしくなる。
+
+\subsubsection{入力からの自動生成}
+
+\TeX \ Live 2018のdvipdfmxは、
+DVIの文字コードがUnicodeであると仮定し、
+これを元にToUnicode CMapを生成していた。
+この方法では逆変換を行わないため、逆変換が原因の問題は発生しない。
+\pTeX の場合はJISコードなのでこの仮定は当てはまらないのだが、
+AJ1であればToUnicode CMapが生成されないので問題ない
+\footnote{TrueTypeの場合はGIDの並びがAJ1相当に並び替えられ、
+  ToUnicode CMapが生成されないようである。}。
+しかし、源ノフォントをJISコードのCMapリソースを作って使った場合や、
+VFでJISコードからUnicodeへ変換した場合には、
+AI0フォントなのでToUnicode CMapが自動生成されるが、
+入力がUnicodeではないため不正なToUnicode CMapとなり、
+テキスト抽出の結果が派手に文字化けしてしまう。
+この挙動はdvipdfmx 20180902で逆変換による自動生成に変更されており、
+\TeX \ Live 2019では文字化けしないようになった。
+
+\subsection{調整済のToUnicode CMap}
+
+ToUnicode CMapの自動生成には、いくつか問題があることを示した。
+そこで、こういった問題が発生しないよう、
+調整済のAJ1用ToUnicode CMapである、
+``Adobe-Japan1-UCS2''がある\cite{mapping-resources}。
+複数のUnicodeに対して同一のCIDを割り当てている場合でも、
+よりふさわしいUnicodeが選ばれ、
+縦書きやデフォルトではない字形でも抜けることはなく、
+別のUnicodeからのマッピングがあるようなCIDでも、
+よりふさわしいUnicodeの方が得られるように調整されている。
+
+PDFにAJ1フォントのToUnicode CMapが埋め込まれていない
+（その分、ファイルサイズを小さくすることができる）状態でも、
+PDF viewerがこの``Adobe-Japan1-UCS2''を持っていれば
+\footnote{PDF viewerによっては、``Adobe-Japan1-UCS2''そのものではなく、
+  これをなにがしかの形式に変換したテーブルを
+  持っている場合もある。}テキスト抽出ができるし、
+自動生成に伴う問題も発生しない、というわけである。
+
+\subsection{PDF/A-2u}
+
+PDF/A規格(ISO 19005)は、
+遠い将来のPDF viewerでも、現在と同様の見た目で表示したり、
+利用したりできるPDFを実現することを目指していて、
+通常のPDF規格をベースに、追加で守らなければならない事項が定められている。
+PDF/A-2uは、そのうちの一つであり、
+テキスト抽出ができる（Unicodeが取得できる）
+ことが必須事項の一つになっている。
+
+\subsubsection{PDF/A作成}
+
+例えば、\LuaTeX でpdfxパッケージ\cite{pdfx}を使うことで
+PDF/Aに準拠したPDFを生成することができる。
+本稿でもこれを利用してPDF/A-2u規格に準拠したPDFとしている。
+しかし、pdfxパッケージは、出力するPDFに対して、
+「PDF/Aである」というメタデータを埋め込むことなどはできるが、
+単純にそれだけではPDF/Aに準拠したことにはならない。
+例えば、PDF/Aでは許されない条件のPDF
+\footnote{RGBとCMYKの双方を一つのPDF内で使うことができない、など。}を
+\texttt{\textbackslash includegraphics}で取り込んだ場合など、
+これをPDF/Aに準拠するよう変換することはできない。
+
+\subsubsection{PDF/Aバリデーション}
+
+「PDF/Aである」というメタデータを持つPDFを
+PDF viewerで開いた場合、
+「PDF/A規格に準拠している可能性があり」というように、
+「準拠している」とは言い切らない表示をするものが多い。
+PDF/Aを名乗っているだけで準拠していない場合は、
+現在のPDF viewerでは一見正常に取り扱うことができるように見えても、
+将来のPDF viewerではおかしくなってしまうかもしれない。
+そこで、本当にPDF/Aに準拠しているか、
+バリデーションを行う必要がある。
+オープンソースのPDF/Aバリデーションツールとして、
+veraPDF \cite{verapdf}がある。
+本稿は、このveraPDFでPDF/A-2uに準拠することを
+確認しながら作成している。
+
+\subsubsection{テキスト抽出の条件}
+
+本来であればISOの規格書をあたるべきであるが、
+有償であるためveraPDFのドキュメントをあたることにする。
+このRule 6.2.11.7-1 \cite{verapdf-rule6.2.11.7-1}を読むと、
+基本的にはToUnicode CMapが必要だが、
+いくつか例外的に無くてもよい条件があり、
+そのうちの一つがAJ1となっている。
+AJ1であれば、PDFにToUnicode CMapが埋め込まれてなくても、
+PDF viewerが``Adobe-Japan1-UCS2''を持っていれば
+テキスト抽出できるため、このような規定になっていると思われる。
+いずれにせよ、規格上もAJ1であればToUnicode CMapが無くても、
+テキスト抽出できるとみなしていることがわかる。
+
+\section{\LuaTeX とToUnicode CMap}
+
+dvipdfmxやxdvipdfmxはAJ1フォントであればToUnicode CMapを生成せず、
+埋め込むこともない。
+しかし、\LuaTeX はAJ1・AI0に関わらずToUnicode CMapを生成して埋め込み、
+しかも埋め込むフォントのROSがAJ1
+\footnote{フォントファイル中の/CIDSystemInfo辞書に
+  ROSがAJ1である旨が記載されている。}でも、
+AI0へ書き換えてしまう
+\footnote{PDFに埋め込まれたフォントは、
+  ROSがAI0である旨を/CIDSystemInfo辞書に記載される。}。
+このToUnicode CMapは逆変換で自動生成されたものなので、
+これまでに述べてきたような問題を抱えている。
+
+\subsection{ToUnicode CMap削除}
+
+AJ1からAI0へ書き換えたからと言って、CIDが変わるわけではない
+\footnote{CID＝GIDの場合。CID≠GIDの場合は、
+  フォント埋め込み時に元のGIDを埋め込む際のCIDとして
+  使うようにしているらしく、結果としてCIDが変わってしまう。}。
+そのため、PDFに埋め込まれた原ノ味フォントのROSをAI0からAJ1に戻し、
+ToUnicode CMapを削除することで、
+逆変換による問題を解消できるはずである。
+そこで、qpdf \cite{qpdf}を使い、手動でこのような加工を行ったところ、
+想定通りとなった
+\footnote{当初、原ノ味フォントはCID≠GIDであったため、
+  この加工ではテキスト抽出が文字化けしてしまった。
+  原ノ味フォント20190501でCID＝GIDとなるよう仕様変更したため、
+  文字化けせずにテキスト抽出可能となった。}。
+
+\subsection{削除ツール}
+
+このToUnicode CMap削除を自動的に行うツールとして
+pdf-rm-tuc \cite{pdf-rm-tuc}を作成した。
+PDFライブラリとしてlibqpdfを使用しており、
+一部qpdfと同様のコマンドラインオプションを使うことができる。
+これにより、
+\texttt{\textcompwordmark --linearize}（Web表示用に最適化）、
+\texttt{\textcompwordmark --object-streams}（オブジェクトストリーム設定）、
+\texttt{\textcompwordmark --newline-before-endstream}（PDF/A向け）、
+\texttt{\textcompwordmark --qdf}（QDF出力）が使用できる。
+本稿のPDFも、このツールを使ってPDF/A-2uを維持したまま
+ToUnicode CMapを削除したものである。
+本稿は、\LuaTeX の出力したPDFではファイルサイズが362 KB程度であったが、
+本ツールを使ってToUnicode CMapの削除などを行うことにより、
+303 KB程度に低減することができた。
+
+なお、本稿も含め、原ノ味角ゴシックで
+「{\gtfamily \CID{23058}}」「{\gtfamily \CID{23059}}」
+を使っていた場合、削除ツールでToUnicode CMapを削除すると、
+現行のveraPDF 1.14ではバリデーションに通過しなくなる。
+これは、veraPDFに内蔵されている``Adobe-Japan1-UCS2''が
+AJ1-6のものであり、AJ1-7で追加されたこれらの文字を使っていると
+Unicodeを得ることができないため、と思われる。
+veraPDFのインストールディレクトリ内の
+\texttt{bin/greenfield-apps-\textit{(version)}.jar}内部にある
+``Adobe-Japan1-UCS2''をAJ1-7のものに置き換えることで、
+バリデーションに通過するようになる。
+また、veraPDF内の``Adobe-Japan1-UCS2''を更新する
+pull requestを投げたところ、
+受け入れられた\cite{verapdf-paser-pr379}ので、
+将来のveraPDFでは、わざわざ置き換える必要はなくなると思われる
+\footnote{PDF/A-2規格制定時に存在しなかったAJ1-7を使ってよいのか、
+  という疑問は残る。}。
+
+\section{おわりに}
+
+源ノフォントはAI0フォントであるため、
+日本語フォントがAJ1であることを前提としたシステムで利用することは困難である。
+本稿では、まず、AJ1とAI0を比較し、
+一部のシステムで源ノフォントが利用困難となる理由を述べた。
+そして、これを解決するためAJ1に組み替えた原ノ味フォントについて述べ、
+源ノフォントでは困難であった利用方法を紹介した。
+次にPDFからのテキスト抽出に使われるToUnicode CMapについて説明し、
+源ノフォントでは問題になる場合があることを示した。
+最後に、テキスト抽出にも関わるPDF/A-2u規格について述べ、
+原ノ味フォントを使って\LuaTeX が出力したPDF/A-2u準拠のPDFから、
+準拠のままToUnicode CMapを削除できるツールを紹介した。
+
+原ノ味フォントのリリース当初は、AJ1だが抜けているグリフがあるので、
+それを埋めることが課題であると考えていた。
+そのためには、源ノフォントのAI0との紐づけを改良していけばよいと考えていた。
+最初は、この改良でグリフ数を増やし、抜けを埋めていくことができた。
+しかし、ある程度進んだところで、
+どうやらそもそも源ノフォントには存在しないグリフが必要になりそうだ、
+ということがわかってきた。
+グリフの「変形」ができれば、90度回転で縦書き用、縮小してルビ用、
+疑似的にイタリック用、などのグリフを作ることができるかもしれない。
+もしかしたらルビ用などは、
+元のグリフをそのままルビ用のCIDへコピーしてもいいかもしれない。
+プロポーショナル幅について決まりが無いのであれば、
+全角幅や半角幅のグリフをそのまま
+プロポーショナル幅のCIDへコピーしてもいいかもしれない。
+あまり手間を掛けたくはないが、悩みどころである。
+
+原ノ味フォント20190824で急遽対策を施したAJ1文字幅問題は、
+本稿執筆中に気が付いたものである。
+単に文字幅を強制的に上書きしただけなので、
+元々の幅が狭かったグリフは左に寄ってしまう。
+これを何とかするにはCFF Charstringを編集する必要があり、
+かなり手がかかってしまう。
+中央配置になるようスライドさせるだけなら（ヒント情報を無視すれば）
+何とかなりそうな気もしているが、
+幅に合わせて拡大させるならば変形の必要がある。
+さらに、元々の幅が広かったグリフの場合は、
+縮小する変形をさせなければ幅の中に収まらない。
+変形させるとなればCharstringラスタライザ相当の処理が必要で、
+かなりの実装量となりそうである。
+ゴシックなら源ノ等幅などから持ってくる方法もなくはないが、
+他のフォントから持ってくるには
+Charstringのサブルーチン呼び出しを展開できる必要がありそうだし、
+そもそも全角幅ではないようなので、さらに変形が必要になるかもしれない。
+この問題は、
+そこそこ使用頻度が高そうに思えたギリシャ文字でも踏んでしまうのだが、
+実際には和文フォントのものはあまり使わない
+（数式フォントの方を使うことが多い）し、
+キリル文字にしろ、他の記号類にしろ、和文フォントで使うことはあまり無く、
+影響は限定的ではないだろうか、とも思っているので、
+どこまでやるか考えどころである。
+
+また、本稿は、原ノ味フォントとは一見関係なさそうなPDF/Aについても触れている。
+あちこちのシステムでAJ1かAI0かによって、
+テキスト抽出に関係する挙動に違いがあり、
+テキスト抽出に深く関係するPDF/A-2uを引っ張り出してきたものである。
+PDFの様々な規格について、
+例えば、印刷用のPDF/Xについては、
+あちこちで解説などを見ることができるが、
+長期保存用のPDF/Aについては、数が少ないように感じている。
+本稿がPDF/Aを作成したい方の助けにもなるようであれば幸いである。
+他にも、PDFに対する電子署名を試してみようと考えたが、
+PDF/Aを維持したまま電子署名できるフリーのPDF処理系を見つけることができず、
+また、認証局が発行した
+電子署名用のクライアント証明書が必要だが有償のものが多く
+\footnote{CAcertは無償で発行しているが、
+  筆者は保証ポイントを持っておらず、名前入り証明書が得られない。}、
+断念した。
+
+原ノ味フォントの構想を最初に思い付いたときは、
+既に誰かが同様のフォントを作っているのではないかと思ったのだが、
+探してみるとどこにも無さそうであった。
+そこで、様々な調査をし、実装をし、動かしてみて、改良を進めてきた。
+始める前から薄々感づいてはいたのだが、
+実際に進めていくと、
+やはりフォント回りは歴史的経緯があるからなのか、
+かなり複雑怪奇になっているように思える。
+本稿は、それなりの調査をした上で執筆したつもりだが、
+簡潔にまとめることができず、
+アブストラクトとは言い難いような分量になってしまったため、
+不十分なところや間違いなどがあるかもしれない。
+本稿のソースファイルや関連ファイルはサイト\cite{tr-texconf2019}で公開し、
+正誤表や修正版なども公開することを検討したいので、
+お気づきの点があればご連絡いただけれるとありがたい。
+
+\begin{flushright}
+（公開用アブストラクト2019年8月30日提出）
+\end{flushright}
+
+\begin{thebibliography}{99}
+
+\bibitem{sourcehanserif} 源ノ明朝/Source Han Serif. \\
+  \url{https://github.com/adobe-fonts/source-han-serif}.
+
+\bibitem{sourcehansans} 源ノ角ゴシック/Source Han Sans. \\
+  \url{https://github.com/adobe-fonts/source-han-sans}.
+
+\bibitem{sil-ofl} SIL Open Font License 1.1. \\
+  \url{http://scripts.sil.org/OFL}.
+
+\bibitem{aj1} Adobe-Japan1文字コレクション. \\
+  \url{https://github.com/adobe-type-tools/Adobe-Japan1}.
+
+\bibitem{pxufont} PXufont Package
+  --- Emulate non-Unicode Japanese fonts using Unicode fonts ---. \\
+  \url{https://www.ctan.org/pkg/pxufont}.
+
+\bibitem{lilypond} LilyPond --- みんなの楽譜作成 ---. \\
+  \url{http://lilypond.org/}
+
+\bibitem{haranoaji} 原ノ味フォント. \\
+  \url{https://github.com/trueroad/HaranoAjiFonts}.
+
+\bibitem{haranoaji-generator} 原ノ味フォント生成プログラム. \\
+  \url{https://github.com/trueroad/HaranoAjiFonts-generator}.
+
+\bibitem{pdf-rm-tuc} Remove ToUnicode CMap from PDF. \\
+  \url{https://github.com/trueroad/pdf-rm-tuc}.
+
+\bibitem{cmap-resource} CMap Resources. \\
+  \url{https://github.com/adobe-type-tools/cmap-resources}.
+
+\bibitem{mapping-resources} Mapping Resources for PDF. \\
+  \url{https://github.com/adobe-type-tools/mapping-resources-pdf}.
+
+\bibitem{jfontmaps} font maps for dvipdfmx. \\
+  \url{https://github.com/texjporg/jfontmaps}.
+
+\bibitem{ipsj.cls} 情報処理学会\LaTeX スタイルファイル. \\
+  \url{https://www.ipsj.or.jp/journal/submit/style.html}.
+
+\bibitem{ptex-jis-sourcehan} cmapからCMapを作る話.
+  マクロツイーター, 2015-10-10. \\
+  \url{https://zrbabbler.hatenablog.com/entry/20151010/1444491218}.
+
+\bibitem{pxufont-ipsj-fail}
+  \url{https://twitter.com/zr_tex8r/status/1111935971627401217}.
+
+\bibitem{dviasm} DVIasm --- A utility for editing DVI files ---. \\
+  \url{https://ctan.org/pkg/dviasm}.
+
+\bibitem{fit2019} FIT2019第18回情報科学技術フォーラム. \\
+  \url{https://www.ipsj.or.jp/event/fit/fit2019/}.
+
+\bibitem{FITpaper-class} FIT2019向け\LaTeX クラスファイル. \\
+  \url{https://github.com/trueroad/FITpaper-class}.
+
+\bibitem{up-ipsj.cls} \texttt{ipsj.cls}を\upLaTeX 用にしてみる
+  （源ノ明朝・源ノ角ゴシックを使う）. \\
+  \url{https://gist.github.com/trueroad/c44312923bf02226c2274388941d0453}
+
+\bibitem{fonttools} A library to manipulate font files from Python. \\
+  \url{https://github.com/fonttools/fonttools}.
+
+\bibitem{pugixml} pugixml --- Light-weight, simple and fast XML parser
+  for C++ with XPath support ---. \\
+  \url{https://pugixml.org/}
+
+\bibitem{pdfx} pdfx --- PDF/X and PDF/A support for \pdfTeX ,
+  \LuaTeX \ and \XeTeX \ ---. \\
+  \url{https://ctan.org/pkg/pdfx}.
+
+\bibitem{verapdf} veraPDF | Industry Supported PDF/A Validation. \\
+  \url{https://verapdf.org/}.
+
+\bibitem{verapdf-rule6.2.11.7-1} Rule 6.2.11.7-1,
+  PDF/A-2 and PDF/A-3 validation rules. \\
+  \url{https://docs.verapdf.org/validation/pdfa-parts-2-and-3/#6.2.11.7-1}.
+
+\bibitem{qpdf}
+  QPDF. \\
+  \url{https://github.com/qpdf/qpdf}.
+
+\bibitem{verapdf-paser-pr379} Update ToUnicode CMaps from upstream. \\
+  \url{https://github.com/veraPDF/veraPDF-parser/pull/379}.
+
+\bibitem{tr-texconf2019} TeXConf 2019一般講演
+  「原ノ味フォントとToUnicode CMap」関連資料. \\
+  \url{https://github.com/trueroad/tr-TeXConf2019}.
+
+\end{thebibliography}
+
+\end{document}
