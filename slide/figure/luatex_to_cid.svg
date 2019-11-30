@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="102.24055mm"
+   height="25.825516mm"
+   viewBox="0 0 102.24055 25.825516"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="luatex_to_cid.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="4"
+     inkscape:cx="162.07508"
+     inkscape:cy="42.217119"
+     inkscape:document-units="mm"
+     inkscape:current-layer="g194"
+     showgrid="false"
+     inkscape:snap-grids="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     fit-margin-top="1"
+     fit-margin-right="1"
+     fit-margin-bottom="1"
+     fit-margin-left="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="L1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-26.978524,-14.790334)">
+    <g
+       id="g258"
+       inkscape:label="group path"
+       style="display:inline">
+      <rect
+         ry="5"
+         rx="5"
+         y="20.178034"
+         x="32.178036"
+         height="12"
+         width="18"
+         id="rect825"
+         style="display:inline;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.35277778;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="rect charcode" />
+      <path
+         inkscape:connector-curvature="0"
+         id="rect829"
+         d="m 61.864433,21.738208 v 1.457275 H 51.024785 v 5.208985 h 10.839648 v 1.349272 l 6.469888,-4.007508 z"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.35277778;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="arrow conv" />
+      <g
+         id="g1824"
+         inkscape:label="group rect table">
+        <rect
+           inkscape:label="rect cmaptable"
+           style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.35277778;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="rect871"
+           width="29.683609"
+           height="5.5428305"
+           x="28.723063"
+           y="33.382484" />
+        <rect
+           inkscape:label="rect gsubtable"
+           style="display:inline;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.35277778;stroke-miterlimit:4;stroke-dasharray:0.35277779, 0.35277779;stroke-dashoffset:0;stroke-opacity:1"
+           id="rect871-5"
+           width="29.683609"
+           height="5.5428305"
+           x="59.44809"
+           y="33.356026" />
+      </g>
+      <g
+         id="g1828"
+         inkscape:label="group connect">
+        <path
+           sodipodi:nodetypes="csc"
+           inkscape:connector-curvature="0"
+           id="path55"
+           d="m 54.084896,28.342947 c 0,0 0.429751,5.558796 1.148771,2.873795 0.862605,-3.221186 -2.683355,2.206205 -2.683355,2.206205"
+           style="fill:none;stroke:#000000;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           inkscape:label="connect cmap" />
+        <path
+           sodipodi:nodetypes="csc"
+           inkscape:connector-curvature="0"
+           id="path55-6"
+           d="m 59.77882,33.356026 c 0,0 -0.42975,-5.558791 -1.148773,-2.87379 -0.86261,3.22119 2.683353,-2.206205 2.683353,-2.206205"
+           style="display:inline;fill:none;stroke:#000000;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:0.26458332, 0.26458332;stroke-dashoffset:0;stroke-opacity:1"
+           inkscape:label="connect gsub" />
+      </g>
+      <rect
+         ry="5"
+         rx="5"
+         y="19.842634"
+         x="69.095833"
+         height="12"
+         width="18"
+         id="rect825-46"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.35277778;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="rect cid" />
+      <path
+         inkscape:connector-curvature="0"
+         id="rect829-6"
+         d="m 98.802261,21.529746 v 1.457275 H 87.962613 v 5.208985 h 10.839648 v 1.349272 l 6.469889,-4.007508 z"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.35277778;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="arrow specify" />
+      <rect
+         ry="5"
+         rx="5"
+         y="19.710342"
+         x="106.00521"
+         height="12"
+         width="18"
+         id="rect825-46-7"
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.35277778;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="rect glyph" />
+    </g>
+    <g
+       id="g249"
+       inkscape:label="group text"
+       style="display:inline">
+      <g
+         id="g165"
+         inkscape:label="group text charcode">
+        <text
+           transform="scale(0.98561903,1.0145908)"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26077837"
+           id="flowRoot815-8"
+           xml:space="preserve"
+           inkscape:label="text texfile"
+           x="41.934246"
+           y="18.820936"><tspan
+             sodipodi:role="line"
+             id="tspan1780"
+             x="41.934246"
+             y="18.820936">\TeX ファイル</tspan></text>
+        <text
+           transform="scale(0.98561902,1.0145908)"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333359px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26077837"
+           id="flowRoot815"
+           xml:space="preserve"
+           inkscape:label="text unicode"
+           x="42.061935"
+           y="25.615856"><tspan
+             sodipodi:role="line"
+             id="tspan1782"
+             x="42.061935"
+             y="25.615856">Unicode</tspan></text>
+        <text
+           transform="scale(0.98561902,1.0145908)"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26077837"
+           id="flowRoot815-5"
+           xml:space="preserve"
+           inkscape:label="text utf-8"
+           x="41.669521"
+           y="29.526573"><tspan
+             sodipodi:role="line"
+             id="tspan1786"
+             x="41.669521"
+             y="29.526573">(UTF-8)</tspan></text>
+      </g>
+      <text
+         y="27.238997"
+         x="58.392475"
+         inkscape:label="text conv"
+         xml:space="preserve"
+         id="flowRoot815-6"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"><tspan
+           id="tspan982"
+           sodipodi:role="line"
+           x="58.392475"
+           y="27.238997"
+           style="stroke-width:0.26458332">変換</tspan></text>
+      <g
+         transform="translate(-15.610417,-2.6458334)"
+         id="g182"
+         inkscape:label="group text convtable">
+        <text
+           inkscape:label="text cmaptable"
+           y="40.203579"
+           x="59.186234"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+           id="flowRoot815-66"
+           xml:space="preserve"><tspan
+             sodipodi:role="line"
+             id="tspan1788"
+             x="59.186234"
+             y="40.203579">cmapテーブル</tspan></text>
+        <text
+           inkscape:label="text gsubtable"
+           y="40.39761"
+           x="89.811752"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+           id="text930"
+           xml:space="preserve"><tspan
+             sodipodi:role="line"
+             id="tspan1790"
+             x="89.811752"
+             y="40.39761">GSUBテーブル</tspan></text>
+      </g>
+      <g
+         id="g194"
+         inkscape:label="group text cid">
+        <text
+           transform="scale(0.98561902,1.0145908)"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26077837"
+           id="flowRoot815-1-7"
+           xml:space="preserve"
+           inkscape:label="text pdf"
+           x="79.562614"
+           y="18.74531"><tspan
+             y="18.74531"
+             x="79.562614"
+             id="tspan1348"
+             sodipodi:role="line">PDF</tspan></text>
+        <text
+           transform="scale(0.98561902,1.0145908)"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333359px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26077837"
+           id="flowRoot815-1"
+           xml:space="preserve"
+           inkscape:label="text cid"
+           x="79.433868"
+           y="26.750801"><tspan
+             sodipodi:role="line"
+             id="tspan1884"
+             x="79.433868"
+             y="26.750801">CID</tspan></text>
+      </g>
+      <text
+         y="27.030535"
+         x="95.462601"
+         inkscape:label="text specify"
+         xml:space="preserve"
+         id="flowRoot815-6-4"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"><tspan
+           id="tspan1130"
+           sodipodi:role="line"
+           x="95.462601"
+           y="27.030535"
+           style="stroke-width:0.26458332">指定</tspan></text>
+      <g
+         id="g211"
+         inkscape:label="group text glyph">
+        <text
+           transform="scale(0.98561902,1.0145908)"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333359px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26077837"
+           id="flowRoot815-4"
+           xml:space="preserve"
+           inkscape:label="text glyph"
+           x="116.93546"
+           y="26.750797"><tspan
+             id="tspan1179"
+             sodipodi:role="line"
+             x="116.93546"
+             y="26.750797"
+             style="stroke-width:0.26077837">グリフ</tspan></text>
+        <text
+           transform="scale(0.98561902,1.0145908)"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26077837"
+           id="flowRoot815-4-6"
+           xml:space="preserve"
+           inkscape:label="text showprint"
+           x="117.15616"
+           y="34.824532"><tspan
+             y="34.824532"
+             x="117.15616"
+             id="tspan1370"
+             sodipodi:role="line">表示・印字</tspan></text>
+        <text
+           transform="scale(0.98561903,1.0145908)"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26077837"
+           id="flowRoot815-4-6-1"
+           xml:space="preserve"
+           inkscape:label="text pdfviewer"
+           x="116.95375"
+           y="38.488029"><tspan
+             y="38.488029"
+             x="116.95375"
+             id="tspan1430"
+             sodipodi:role="line">(PDF viewer)</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>
